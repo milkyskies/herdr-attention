@@ -82,9 +82,23 @@ herdr plugin link /path/to/herdr-attention
 
 ## Use
 
-- Default keybinding: **`prefix+a`** ("attention"). Rebind in your herdr config if
-  it collides.
-- Or run it from the command palette: **"Jump to next agent needing attention"**.
+Add a keybinding to your `~/.config/herdr/config.toml` (the manifest ships a
+suggested `prefix+a`, but herdr binds keys from *your* config, so you need this
+block), then run `herdr server reload-config`:
+
+```toml
+[[keys.command]]
+key = "prefix+a"                    # "attention" — change if it collides
+type = "plugin_action"
+command = "attention.jump.next"
+description = "jump to next agent needing attention"
+```
+
+You can also run it anytime without a key:
+
+```bash
+herdr plugin action invoke next --plugin attention.jump
+```
 
 ## Requirements
 
