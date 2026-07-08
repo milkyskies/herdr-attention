@@ -1,0 +1,22 @@
+id = "attention.jump"
+name = "Attention Jump"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+description = "Jump focus to the next agent that needs attention (blocked, then done)."
+platforms = ["linux", "macos", "windows"]
+
+# One action: cycle focus to the most urgent agent that needs attention.
+# Bound to a key below, but also invokable from the command palette.
+[[actions]]
+id = "next"
+title = "Jump to next agent needing attention"
+contexts = ["workspace"]
+command = ["node", "jump.js"]
+
+# Default keybinding. Change `key` in your herdr config if it collides.
+# `prefix+a` = "attention".
+[[keys.command]]
+key = "prefix+a"
+type = "plugin_action"
+command = "attention.jump.next"
+description = "Jump to next agent needing attention"
