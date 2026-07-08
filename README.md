@@ -1,10 +1,15 @@
 # Attention Jump
 
-A tiny herdr plugin that focuses the next agent needing attention — one keypress.
+A tiny [herdr](https://herdr.dev) plugin that focuses the next agent needing
+attention — one keypress.
 
 Think "go to next error" in an IDE, but for your agents. Hit the key and herdr
 switches to the workspace/tab/pane of the most urgent agent and drops your cursor
 in it.
+
+When you're running a dozen agents across tabs and workspaces, the hard part isn't
+seeing that *something* needs you — the sidebar shows that — it's getting *there*
+fast without hunting. This is that: a keyboard warp to the thing that's waiting.
 
 ## Behavior
 
@@ -22,6 +27,50 @@ the `blocked` prompt), each press just surfaces the next thing until a toast say
 `herdr agent focus <pane_id>` does the heavy lifting — it switches workspace, tab,
 and pane in one call, so jumps work across the whole session, not just the current
 tab.
+
+## What it looks like
+
+Say you've got five agents running:
+
+```
+w1:p1   working    ← you are here
+w1:pA   done
+w1:pF   blocked
+w2:p1   working
+w2:p7   done
+```
+
+Press **`prefix+a`**:
+
+```
+→ jumps to w1:pF  (blocked — most urgent)   toast: "→ claude blocked (+2 more)"
+```
+
+Answer its prompt, press **`prefix+a`** again:
+
+```
+→ jumps to w1:pA  (done)                    toast: "→ claude done (+1 more)"
+```
+
+…and again to `w2:p7`. Once nothing is left:
+
+```
+toast: "Nothing needs attention"
+```
+
+## How it works
+
+```
+prefix+a
+   │
+   ├─ herdr agent list           → every agent + its agent_status
+   ├─ keep blocked | done,        skip the one you're already focused on
+   ├─ sort: blocked before done,  tie-break by pane id (stable)
+   └─ herdr agent focus <pane_id> → switches workspace + tab + pane in one call
+```
+
+No state is persisted between presses — focusing clears `done`, and you clear the
+`blocked` prompt yourself, so the list naturally shrinks each press.
 
 ## Install
 
@@ -49,3 +98,7 @@ herdr plugin link /path/to/herdr-attention
   `idle` and won't be caught.
 - Detached workspaces are included (agent focus will attach). If you'd rather only
   cycle attached workspaces, filter on `workspace_id` in `jump.js`.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
